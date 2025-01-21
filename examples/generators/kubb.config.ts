@@ -24,6 +24,7 @@ export default defineConfig(() => {
         output: {
           path: './example1.ts',
         },
+
         validate: false,
         generators: [example1],
       }),
@@ -36,7 +37,10 @@ export default defineConfig(() => {
       }),
       pluginOas({
         output: {
-          path: './example3.tsx',
+          path: './example3',
+        },
+        group: {
+          type: 'tag',
         },
         validate: false,
         generators: [example3],
