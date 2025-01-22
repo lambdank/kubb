@@ -8,6 +8,7 @@ import { pluginTsName } from '@kubb/plugin-ts'
 import { pluginZodName } from '@kubb/plugin-zod'
 
 import type { Plugin } from '@kubb/core'
+import { readSync } from '@kubb/fs'
 import type { PluginOas } from '@kubb/plugin-oas'
 import { MutationKey } from './components'
 import { QueryKey } from './components/QueryKey.tsx'
@@ -35,6 +36,7 @@ export const pluginReactQuery = createPlugin<PluginReactQuery>((options) => {
     mutationKey = MutationKey.getTransformer,
     queryKey = QueryKey.getTransformer,
     paramsCasing,
+    client,
   } = options
 
   return {
@@ -42,9 +44,8 @@ export const pluginReactQuery = createPlugin<PluginReactQuery>((options) => {
     options: {
       output,
       client: {
-        importPath: '@kubb/plugin-client/clients/axios',
         dataReturnType: 'data',
-        ...options.client,
+        ...client,
       },
       infinite: infinite
         ? {
@@ -139,6 +140,19 @@ export const pluginReactQuery = createPlugin<PluginReactQuery>((options) => {
 
       if (baseURL) {
         this.plugin.options.client.baseURL = baseURL
+      }
+
+      if (!client?.importPath) {
+        const clientFile = this.pluginManager.getFile({ name: 'client', extname: '.ts', pluginKey: this.plugin.key })
+
+        await this.addFile({
+          ...clientFile,
+          sources: [
+            {
+              value: readSync(path.resolve(__dirname, '../clients/axios.ts')),
+            },
+          ],
+        })
       }
 
       const operationGenerator = new OperationGenerator(this.plugin.options, {

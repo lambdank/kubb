@@ -1,12 +1,12 @@
 /* eslint-disable no-alert, no-console */
-import client from '@kubb/plugin-client/clients/axios'
+import client from '../client.js'
+import type { RequestConfig, ResponseErrorConfig } from '../client.js'
 import type {
   UpdatePetWithFormMutationResponse,
   UpdatePetWithFormPathParams,
   UpdatePetWithFormQueryParams,
   UpdatePetWithForm405,
 } from '../../../models/ts/petController/UpdatePetWithForm.js'
-import type { RequestConfig, ResponseErrorConfig } from '@kubb/plugin-client/clients/axios'
 
 export function getUpdatePetWithFormUrl({ petId }: { petId: UpdatePetWithFormPathParams['petId'] }) {
   return `/pet/${petId}` as const

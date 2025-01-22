@@ -97,11 +97,12 @@ type ResolvedOptions = {
   group?: Options['group']
   baseURL: string | undefined
   parser: NonNullable<Options['parser']>
-  importPath: NonNullable<Options['importPath']>
+  importPath: Options['importPath']
   dataReturnType: NonNullable<Options['dataReturnType']>
   pathParamsType: NonNullable<Options['pathParamsType']>
   paramsType: NonNullable<Options['paramsType']>
   paramsCasing: Options['paramsCasing']
+  client?: Options['client']
 }
 
 export type PluginClient = PluginFactoryOptions<'plugin-client', Options, ResolvedOptions, never, ResolvePathOptions>

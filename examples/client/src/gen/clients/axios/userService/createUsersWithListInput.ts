@@ -1,10 +1,10 @@
 /* eslint-disable no-alert, no-console */
-import client from '@kubb/plugin-client/clients/axios'
+import client from '../client.js'
+import type { RequestConfig, ResponseErrorConfig } from '../client.js'
 import type {
   CreateUsersWithListInputMutationRequest,
   CreateUsersWithListInputMutationResponse,
 } from '../../../models/ts/userController/CreateUsersWithListInput.js'
-import type { RequestConfig, ResponseErrorConfig } from '@kubb/plugin-client/clients/axios'
 
 export function getCreateUsersWithListInputUrl() {
   return '/user/createWithList' as const

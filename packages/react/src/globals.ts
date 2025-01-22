@@ -18,6 +18,7 @@ declare module 'react' {
       }
       'kubb-source': KubbFile.Source & {
         children?: KubbNode
+        path?: string
       }
       'kubb-import': KubbFile.Import
       'kubb-export': KubbFile.Export

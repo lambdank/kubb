@@ -14,7 +14,9 @@ export const clientStaticGenerator = createReactGenerator<PluginClient>({
     const {
       plugin: {
         options: { output },
+        key: pluginKey,
       },
+      pluginManager,
     } = useApp<PluginClient>()
     const oas = useOas()
     const { getSchemas, getName, getFile } = useOperationManager()
@@ -29,6 +31,8 @@ export const clientStaticGenerator = createReactGenerator<PluginClient>({
       schemas: getSchemas(operation, { pluginKey: [pluginTsName], type: 'type' }),
     }
 
+    const importPath = options.importPath ? options.importPath : pluginManager.getFile({ name: 'client', extname: '.ts', pluginKey }).path
+
     return (
       <File
         baseName={client.file.baseName}
@@ -37,8 +41,8 @@ export const clientStaticGenerator = createReactGenerator<PluginClient>({
         banner={getBanner({ oas, output })}
         footer={getFooter({ oas, output })}
       >
-        <File.Import name={'client'} path={options.importPath} />
-        <File.Import name={['RequestConfig', 'ResponseErrorConfig']} path={options.importPath} isTypeOnly />
+        <File.Import name={'client'} root={options.importPath ? undefined : client.file.path} path={importPath} />
+        <File.Import name={['RequestConfig', 'ResponseErrorConfig']} root={options.importPath ? undefined : client.file.path} path={importPath} isTypeOnly />
         <File.Import
           name={[
             type.schemas.request?.name,

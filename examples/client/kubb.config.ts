@@ -69,6 +69,7 @@ export default defineConfig(() => {
             pattern: 'store',
           },
         ],
+        importPath: '@kubb/plugin-client/clients/axios',
         group: {
           type: 'tag',
           name({ group }) {
@@ -83,6 +84,7 @@ export default defineConfig(() => {
           path: './tagClientOperation.ts',
         },
         generators: [clientOperationGenerator],
+        importPath: '@kubb/plugin-client/clients/axios',
         include: [
           {
             type: 'tag',
@@ -97,6 +99,7 @@ export default defineConfig(() => {
           path: './tagClientOperationReact.ts',
         },
         generators: [clientOperationReactGenerator],
+        importPath: '@kubb/plugin-client/clients/axios',
         include: [
           {
             type: 'tag',
@@ -110,7 +113,7 @@ export default defineConfig(() => {
         output: {
           path: './tag.ts',
         },
-        parser: 'client',
+        importPath: '@kubb/plugin-client/clients/axios',
         include: [
           {
             type: 'tag',

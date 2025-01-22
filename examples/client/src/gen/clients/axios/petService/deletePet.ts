@@ -1,7 +1,7 @@
 /* eslint-disable no-alert, no-console */
-import client from '@kubb/plugin-client/clients/axios'
+import client from '../client.js'
+import type { RequestConfig, ResponseErrorConfig } from '../client.js'
 import type { DeletePetMutationResponse, DeletePetPathParams, DeletePetHeaderParams, DeletePet400 } from '../../../models/ts/petController/DeletePet.js'
-import type { RequestConfig, ResponseErrorConfig } from '@kubb/plugin-client/clients/axios'
 
 export function getDeletePetUrl({ petId }: { petId: DeletePetPathParams['petId'] }) {
   return `/pet/${petId}` as const

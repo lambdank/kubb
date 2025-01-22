@@ -71,7 +71,7 @@
   "files": [
     "src",
     "dist",
-    "client.ts",
+    "clients",
     "*.d.ts",
     "*.d.cts",
     "!/**/**.test.**",

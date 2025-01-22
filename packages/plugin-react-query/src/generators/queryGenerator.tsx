@@ -69,6 +69,10 @@ export const queryGenerator = createReactGenerator<PluginReactQuery>({
       schemas: getSchemas(operation, { pluginKey: [pluginZodName], type: 'function' }),
     }
 
+    const importClientPath = options.client.importPath
+      ? options.client.importPath
+      : pluginManager.getFile({ name: 'client', extname: '.ts', pluginKey: [pluginClientName] }).path
+
     if (!isQuery || isMutation) {
       return null
     }
@@ -82,10 +86,17 @@ export const queryGenerator = createReactGenerator<PluginReactQuery>({
         footer={getFooter({ oas, output })}
       >
         {options.parser === 'zod' && <File.Import name={[zod.schemas.response.name]} root={query.file.path} path={zod.file.path} />}
-        {!hasClientPlugin && <File.Import name={'client'} path={options.client.importPath} />}
+        {!hasClientPlugin && <File.Import name={'client'} root={options.client.importPath ? undefined : client.file.path} path={importClientPath} />}
+        <File.Import
+          name={['RequestConfig', 'ResponseErrorConfig']}
+          root={options.client.importPath ? undefined : client.file.path}
+          path={importClientPath}
+          isTypeOnly
+        />
         {hasClientPlugin && <File.Import name={[client.name]} root={query.file.path} path={client.file.path} />}
-        <File.Import name={['RequestConfig', 'ResponseErrorConfig']} path={options.client.importPath} isTypeOnly />
-        {options.client.dataReturnType === 'full' && <File.Import name={['ResponseConfig']} path={options.client.importPath} isTypeOnly />}
+        {options.client.dataReturnType === 'full' && (
+          <File.Import name={['ResponseConfig']} root={options.client.importPath ? undefined : client.file.path} path={importClientPath} isTypeOnly />
+        )}
         <File.Import
           name={[
             type.schemas.request?.name,

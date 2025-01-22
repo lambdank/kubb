@@ -1,12 +1,12 @@
 /* eslint-disable no-alert, no-console */
-import client from '@kubb/plugin-client/clients/axios'
+import client from '../client.js'
+import type { RequestConfig, ResponseErrorConfig } from '../client.js'
 import type {
   GetUserByNameQueryResponse,
   GetUserByNamePathParams,
   GetUserByName400,
   GetUserByName404,
 } from '../../../models/ts/userController/GetUserByName.js'
-import type { RequestConfig, ResponseErrorConfig } from '@kubb/plugin-client/clients/axios'
 
 export function getGetUserByNameUrl({ username }: { username: GetUserByNamePathParams['username'] }) {
   return `/user/${username}` as const

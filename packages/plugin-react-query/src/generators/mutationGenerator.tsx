@@ -64,6 +64,10 @@ export const mutationGenerator = createReactGenerator<PluginReactQuery>({
       typeName: getName(operation, { type: 'type', suffix: 'MutationKey' }),
     }
 
+    const importClientPath = options.client.importPath
+      ? options.client.importPath
+      : pluginManager.getFile({ name: 'client', extname: '.ts', pluginKey: [pluginClientName] }).path
+
     if (!isMutation) {
       return null
     }
@@ -77,9 +81,14 @@ export const mutationGenerator = createReactGenerator<PluginReactQuery>({
         footer={getFooter({ oas, output })}
       >
         {options.parser === 'zod' && <File.Import name={[zod.schemas.response.name]} root={mutation.file.path} path={zod.file.path} />}
-        {!hasClientPlugin && <File.Import name={'client'} path={options.client.importPath} />}
-        {!!hasClientPlugin && <File.Import name={[client.name]} root={mutation.file.path} path={client.file.path} />}
-        <File.Import name={['RequestConfig', 'ResponseConfig', 'ResponseErrorConfig']} path={options.client.importPath} isTypeOnly />
+        {!hasClientPlugin && <File.Import name={'client'} root={options.client.importPath ? undefined : client.file.path} path={importClientPath} />}
+        {hasClientPlugin && <File.Import name={[client.name]} root={mutation.file.path} path={client.file.path} />}
+        <File.Import
+          name={['RequestConfig', 'ResponseConfig', 'ResponseErrorConfig']}
+          root={options.client.importPath ? undefined : client.file.path}
+          path={importClientPath}
+          isTypeOnly
+        />
         <File.Import
           name={[
             type.schemas.request?.name,

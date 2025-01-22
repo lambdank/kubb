@@ -155,7 +155,7 @@ export type Options = {
 type ResolvedOptions = {
   output: Output<Oas>
   group: Options['group']
-  client: Required<Omit<NonNullable<PluginReactQuery['options']['client']>, 'baseURL'>> & { baseURL?: string }
+  client: Required<Omit<NonNullable<PluginReactQuery['options']['client']>, 'baseURL' | 'importPath'>> & { baseURL?: string; importPath?: string }
   parser: Required<NonNullable<Options['parser']>>
   pathParamsType: NonNullable<Options['pathParamsType']>
   paramsCasing: Options['paramsCasing']

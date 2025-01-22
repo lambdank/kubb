@@ -5,13 +5,14 @@ import { camelCase } from '@kubb/core/transformers'
 import { OperationGenerator, pluginOasName } from '@kubb/plugin-oas'
 
 import type { Plugin } from '@kubb/core'
+import { readSync } from '@kubb/fs'
+import type * as KubbFile from '@kubb/fs/types'
 import type { PluginOas as SwaggerPluginOptions } from '@kubb/plugin-oas'
 import { pluginZodName } from '@kubb/plugin-zod'
 import { operationsGenerator } from './generators'
 import { clientGenerator } from './generators/clientGenerator.tsx'
 import { groupedClientGenerator } from './generators/groupedClientGenerator.tsx'
 import type { PluginClient } from './types.ts'
-
 export const pluginClientName = 'plugin-client' satisfies PluginClient['name']
 
 export const pluginClient = createPlugin<PluginClient>((options) => {
@@ -31,7 +32,7 @@ export const pluginClient = createPlugin<PluginClient>((options) => {
     generators = [clientGenerator, group ? groupedClientGenerator : undefined, operations ? operationsGenerator : undefined].filter(Boolean),
     parser = 'client',
     client = 'axios',
-    importPath = client === 'fetch' ? '@kubb/plugin-client/clients/fetch' : '@kubb/plugin-client/clients/axios',
+    importPath,
   } = options
 
   return {
@@ -39,6 +40,7 @@ export const pluginClient = createPlugin<PluginClient>((options) => {
     options: {
       output,
       group,
+      client,
       parser,
       dataReturnType,
       importPath,
@@ -98,6 +100,19 @@ export const pluginClient = createPlugin<PluginClient>((options) => {
       const root = path.resolve(this.config.root, this.config.output.path)
       const mode = FileManager.getMode(path.resolve(root, output.path))
       const baseURL = await swaggerPlugin.context.getBaseURL()
+
+      if (!importPath) {
+        const clientFile = this.pluginManager.getFile({ name: 'client', extname: '.ts', pluginKey: this.plugin.key })
+
+        await this.addFile({
+          ...clientFile,
+          sources: [
+            {
+              value: readSync(path.resolve(__dirname, '../clients/axios.ts')),
+            },
+          ],
+        })
+      }
 
       const operationGenerator = new OperationGenerator(
         baseURL

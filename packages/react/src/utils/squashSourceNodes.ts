@@ -1,5 +1,6 @@
 import { nodeNames } from '../dom.ts'
 
+import { readSync } from '@kubb/fs'
 import type * as KubbFile from '@kubb/fs/types'
 import type React from 'react'
 import type { File } from '../components/File.tsx'
@@ -20,7 +21,7 @@ export function squashSourceNodes(node: DOMElement, ignores: Array<ElementNames>
 
     if (childNode.nodeName === 'kubb-source') {
       const attributes = childNode.attributes as React.ComponentProps<typeof File.Source>
-      const value = squashTextNodes(childNode)
+      const value = attributes.path ? readSync(attributes.path) : squashTextNodes(childNode)
 
       sources.add({
         ...attributes,
