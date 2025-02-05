@@ -5,7 +5,7 @@ import type { PluginFactoryOptions, PluginManager } from '@kubb/core'
 import type * as KubbFile from '@kubb/fs/types'
 
 import type { Plugin } from '@kubb/core'
-import type { HttpMethod, Oas, OasTypes, Operation, SchemaObject, contentType } from '@kubb/oas'
+import type { ContentType, HttpMethod, Oas, OasTypes, Operation, SchemaObject } from '@kubb/oas'
 import type { Generator } from './generator.tsx'
 import type { Exclude, Include, OperationSchemas, OperationsByMethod, Override } from './types.ts'
 
@@ -16,7 +16,7 @@ type Context<TOptions, TPluginOptions extends PluginFactoryOptions> = {
   exclude: Array<Exclude> | undefined
   include: Array<Include> | undefined
   override: Array<Override<TOptions>> | undefined
-  contentType: contentType | undefined
+  contentType: ContentType | undefined
   pluginManager: PluginManager
   /**
    * Current plugin
@@ -116,23 +116,24 @@ export class OperationGenerator<
 
   getSchemas(
     operation: Operation,
+    contentType: ContentType,
     {
       resolveName = (name) => name,
     }: {
       resolveName?: (name: string) => string
     } = {},
   ): OperationSchemas {
-    const pathParamsSchema = this.context.oas.getParametersSchema(operation, 'path')
-    const queryParamsSchema = this.context.oas.getParametersSchema(operation, 'query')
-    const headerParamsSchema = this.context.oas.getParametersSchema(operation, 'header')
-    const requestSchema = this.context.oas.getRequestSchema(operation)
+    const pathParamsSchema = this.context.oas.getParametersSchema(operation, 'path', contentType)
+    const queryParamsSchema = this.context.oas.getParametersSchema(operation, 'query', contentType)
+    const headerParamsSchema = this.context.oas.getParametersSchema(operation, 'header', contentType)
+    const requestSchema = this.context.oas.getRequestSchema(operation, contentType)
     const statusCodes = operation.getResponseStatusCodes().map((statusCode) => {
       let name = statusCode
       if (name === 'default') {
         name = 'error'
       }
 
-      const schema = this.context.oas.getResponseSchema(operation, statusCode)
+      const schema = this.context.oas.getResponseSchema(operation, statusCode, contentType)
 
       return {
         name: resolveName(transformers.pascalCase(`${operation.getOperationId({ friendlyCase: true })} ${name}`)),
@@ -245,7 +246,7 @@ export class OperationGenerator<
               ...acc[path],
               [method]: {
                 operation,
-                schemas: this.getSchemas(operation),
+                schemas: this.getSchemas(operation, this.context.contentType || operation.getContentType()),
               },
             } as OperationsByMethod['get']
           }

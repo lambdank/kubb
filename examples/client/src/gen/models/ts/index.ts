@@ -48,6 +48,7 @@ export type {
   UploadFileMutation,
 } from './petController/UploadFile.js'
 export type { PetNotFound } from './PetNotFound.js'
+export type { PetXML } from './PetXML.js'
 export type { DeleteOrderPathParams, DeleteOrder400, DeleteOrder404, DeleteOrderMutationResponse, DeleteOrderMutation } from './storeController/DeleteOrder.js'
 export type { GetInventory200, GetInventoryQueryResponse, GetInventoryQuery } from './storeController/GetInventory.js'
 export type {

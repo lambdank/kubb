@@ -2,7 +2,7 @@ import type { Group, Output, Plugin } from '@kubb/core'
 import type { PluginFactoryOptions, ResolveNameParams } from '@kubb/core'
 import type * as KubbFile from '@kubb/fs/types'
 
-import type { HttpMethod, Oas, Operation, SchemaObject, contentType } from '@kubb/oas'
+import type { ContentType, HttpMethod, Oas, Operation, SchemaObject } from '@kubb/oas'
 import type { Generator } from './generator.tsx'
 import type { GetSchemasProps } from './utils/getSchemas.ts'
 
@@ -19,7 +19,7 @@ export type API = {
   getOas: () => Promise<Oas>
   getSchemas: (options?: Pick<GetSchemasProps, 'includes'>) => Promise<Record<string, SchemaObject>>
   getBaseURL: () => Promise<string | undefined>
-  contentType?: contentType
+  contentType?: ContentType
 }
 
 export type Options = {
@@ -48,7 +48,7 @@ export type Options = {
    * Define which contentType should be used.
    * By default, this is set based on the contentType being found.
    */
-  contentType?: contentType
+  contentType?: ContentType
   /**
    * Override some behaviour of the Oas class instance, see '@kubb/oas'
    */

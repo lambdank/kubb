@@ -61,6 +61,7 @@ export type {
   UploadFileMutation,
 } from './models/ts/petController/UploadFile.js'
 export type { PetNotFound } from './models/ts/PetNotFound.js'
+export type { PetXML } from './models/ts/PetXML.js'
 export type {
   DeleteOrderPathParams,
   DeleteOrder400,

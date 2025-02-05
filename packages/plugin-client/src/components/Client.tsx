@@ -1,6 +1,6 @@
 import { URLPath } from '@kubb/core/utils'
 
-import { type Operation, isOptional } from '@kubb/oas'
+import { type ContentType, type Operation, isOptional } from '@kubb/oas'
 import type { OperationSchemas } from '@kubb/plugin-oas'
 import { getComments, getPathParams } from '@kubb/plugin-oas/utils'
 import { File, Function, FunctionParams } from '@kubb/react'
@@ -25,6 +25,7 @@ type Props = {
   typeSchemas: OperationSchemas
   zodSchemas: OperationSchemas | undefined
   operation: Operation
+  contentType?: ContentType | undefined
 }
 
 type GetParamsProps = {
@@ -119,9 +120,9 @@ export function Client({
   pathParamsType,
   operation,
   urlName,
+  contentType = operation.getContentType(),
 }: Props) {
   const path = new URLPath(operation.path, { casing: paramsCasing })
-  const contentType = operation.getContentType()
   const isFormData = contentType === 'multipart/form-data'
   const headers = [
     contentType !== 'application/json' ? `'Content-Type': '${contentType}'` : undefined,

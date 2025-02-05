@@ -1,5 +1,3 @@
-import type { ApiResponse } from '../ApiResponse.js'
-
 export type UploadFilePathParams = {
   /**
    * @description ID of pet to update
@@ -19,7 +17,7 @@ export type UploadFileQueryParams = {
 /**
  * @description successful operation
  */
-export type UploadFile200 = ApiResponse
+export type UploadFile200 = any
 
 export type UploadFileMutationRequest = {
   /**

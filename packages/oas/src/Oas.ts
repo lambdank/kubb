@@ -9,10 +9,10 @@ import { isReference } from './utils.ts'
 import type { Operation } from 'oas/operation'
 import type { MediaTypeObject, OASDocument, ResponseObject, SchemaObject, User } from 'oas/types'
 import type { OasTypes, OpenAPIV3 } from './index.ts'
-import type { contentType } from './types.ts'
+import type { ContentType } from './types.ts'
 
 type Options = {
-  contentType?: contentType
+  contentType?: ContentType
 }
 
 export class Oas<const TOAS = unknown> extends BaseOas {
@@ -157,7 +157,7 @@ export class Oas<const TOAS = unknown> extends BaseOas {
     }
   }
 
-  getResponseSchema(operation: Operation, statusCode: string | number): SchemaObject {
+  getResponseSchema(operation: Operation, statusCode: string | number, contentType = this.#options.contentType): SchemaObject {
     if (operation.schema.responses) {
       Object.keys(operation.schema.responses).forEach((key) => {
         const schema = operation.schema.responses![key]
@@ -171,7 +171,6 @@ export class Oas<const TOAS = unknown> extends BaseOas {
 
     const getResponseBody = this.#getResponseBodyFactory(operation.getResponseByStatusCode(statusCode))
 
-    const { contentType } = this.#options
     const responseBody = getResponseBody(contentType)
 
     if (responseBody === false) {
@@ -190,9 +189,7 @@ export class Oas<const TOAS = unknown> extends BaseOas {
     return this.dereferenceWithRef(schema)
   }
 
-  getRequestSchema(operation: Operation): SchemaObject | undefined {
-    const { contentType } = this.#options
-
+  getRequestSchema(operation: Operation, contentType = this.#options.contentType): SchemaObject | undefined {
     if (operation.schema.requestBody) {
       operation.schema.requestBody = this.dereferenceWithRef(operation.schema.requestBody)
     }
@@ -212,8 +209,7 @@ export class Oas<const TOAS = unknown> extends BaseOas {
     return this.dereferenceWithRef(schema)
   }
 
-  getParametersSchema(operation: Operation, inKey: 'path' | 'query' | 'header'): SchemaObject | null {
-    const { contentType = operation.getContentType() } = this.#options
+  getParametersSchema(operation: Operation, inKey: 'path' | 'query' | 'header', contentType = this.#options.contentType): SchemaObject | null {
     const params = operation
       .getParameters()
       .map((schema) => {
@@ -221,7 +217,7 @@ export class Oas<const TOAS = unknown> extends BaseOas {
       })
       .filter((v) => v.in === inKey)
 
-    if (!params.length) {
+    if (!params.length || !contentType) {
       return null
     }
 

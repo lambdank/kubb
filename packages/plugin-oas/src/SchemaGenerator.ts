@@ -11,7 +11,7 @@ import { getSchemas } from './utils/getSchemas.ts'
 import type { Plugin, PluginFactoryOptions, PluginManager, ResolveNameParams } from '@kubb/core'
 import type * as KubbFile from '@kubb/fs/types'
 
-import type { Oas, OpenAPIV3, SchemaObject, contentType } from '@kubb/oas'
+import type { ContentType, Oas, OpenAPIV3, SchemaObject } from '@kubb/oas'
 import type { Schema, SchemaKeywordMapper } from './SchemaMapper.ts'
 import type { Generator } from './generator.tsx'
 import type { OperationSchema, Override, Refs } from './types.ts'
@@ -30,7 +30,7 @@ type Context<TOptions, TPluginOptions extends PluginFactoryOptions> = {
   mode: KubbFile.Mode
   include?: Array<'schemas' | 'responses' | 'requestBodies'>
   override: Array<Override<TOptions>> | undefined
-  contentType?: contentType
+  contentType?: ContentType
   output?: string
 }
 
@@ -907,11 +907,11 @@ export class SchemaGenerator<
   }
 
   async build(...generators: Array<Generator<TPluginOptions>>): Promise<Array<KubbFile.File<TFileMeta>>> {
-    const { oas, contentType, include } = this.context
+    const { oas, include } = this.context
 
     oas.resolveDiscriminators()
 
-    const schemas = getSchemas({ oas, contentType, includes: include })
+    const schemas = getSchemas({ oas, includes: include })
 
     const promises = Object.entries(schemas).reduce((acc, [name, value]) => {
       if (!value) {

@@ -61,7 +61,7 @@ export const pluginOas = createPlugin<PluginOas>((options) => {
         },
         async getSchemas({ includes } = {}) {
           const oas = await this.getOas()
-          return getSchemas({ oas, contentType, includes })
+          return getSchemas({ oas, includes })
         },
         async getBaseURL() {
           const oasInstance = await this.getOas()

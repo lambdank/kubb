@@ -5,7 +5,7 @@ import { Oas } from '../components/Oas.tsx'
 import type { FileMetaBase, Plugin, ResolveNameParams } from '@kubb/core'
 
 import type * as KubbFile from '@kubb/fs/types'
-import type { Operation, Operation as OperationType } from '@kubb/oas'
+import type { ContentType, Operation, Operation as OperationType } from '@kubb/oas'
 import type { OperationSchemas } from '../types.ts'
 
 type FileMeta = FileMetaBase & {
@@ -31,7 +31,7 @@ export type SchemaNames = {
 type UseOperationManagerResult = {
   getName: (
     operation: OperationType,
-    params: {
+    options: {
       prefix?: string
       suffix?: string
       pluginKey?: Plugin['key']
@@ -40,7 +40,7 @@ type UseOperationManagerResult = {
   ) => string
   getFile: (
     operation: OperationType,
-    params?: {
+    options?: {
       prefix?: string
       suffix?: string
       pluginKey?: Plugin['key']
@@ -53,12 +53,13 @@ type UseOperationManagerResult = {
   ) => KubbFile.File<FileMeta>
   groupSchemasByName: (
     operation: OperationType,
-    params: {
+    options: {
+      contentType?: ContentType
       pluginKey?: Plugin['key']
       type: ResolveNameParams['type']
     },
   ) => SchemaNames
-  getSchemas: (operation: Operation, params?: { pluginKey?: Plugin['key']; type?: ResolveNameParams['type'] }) => OperationSchemas
+  getSchemas: (operation: Operation, options?: { contentType?: ContentType; pluginKey?: Plugin['key']; type?: ResolveNameParams['type'] }) => OperationSchemas
   getGroup: (operation: Operation) => FileMeta['group'] | undefined
 }
 
@@ -84,17 +85,17 @@ export function useOperationManager(): UseOperationManagerResult {
     }
   }
 
-  const getSchemas: UseOperationManagerResult['getSchemas'] = (operation, params) => {
+  const getSchemas: UseOperationManagerResult['getSchemas'] = (operation, options) => {
     if (!generator) {
       throw new Error(`'generator' is not defined`)
     }
 
-    return generator.getSchemas(operation, {
+    return generator.getSchemas(operation, options?.contentType || operation.getContentType(), {
       resolveName: (name) =>
         pluginManager.resolveName({
           name,
-          pluginKey: params?.pluginKey,
-          type: params?.type,
+          pluginKey: options?.pluginKey,
+          type: options?.type,
         }),
     })
   }
@@ -121,12 +122,12 @@ export function useOperationManager(): UseOperationManagerResult {
     }
   }
 
-  const groupSchemasByName: UseOperationManagerResult['groupSchemasByName'] = (operation, { pluginKey = plugin.key, type }) => {
+  const groupSchemasByName: UseOperationManagerResult['groupSchemasByName'] = (operation, { contentType, pluginKey = plugin.key, type }) => {
     if (!generator) {
       throw new Error(`'generator' is not defined`)
     }
 
-    const schemas = generator.getSchemas(operation)
+    const schemas = generator.getSchemas(operation, contentType || operation.getContentType())
 
     const errors = (schemas.errors || []).reduce(
       (prev, acc) => {

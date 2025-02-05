@@ -16,10 +16,10 @@ type FileMeta = FileMetaBase & {
 }
 
 type UseSchemaManagerResult = {
-  getName: (name: string, params: { pluginKey?: Plugin['key']; type: ResolveNameParams['type'] }) => string
+  getName: (name: string, options: { pluginKey?: Plugin['key']; type: ResolveNameParams['type'] }) => string
   getFile: (
     name: string,
-    params?: {
+    options?: {
       pluginKey?: Plugin['key']
       mode?: Mode
       extname?: KubbFile.Extname
